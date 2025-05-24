@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import resend
 
 import os
 from pathlib import Path
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     # My Middleware
     'main_app.middleware.LoginCheckMiddleWare',
 ]
+
 
 ROOT_URLCONF = 'office_ops.urls'
 
@@ -138,23 +140,25 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTH_USER_MODEL = 'main_app.CustomUser'
 AUTHENTICATION_BACKENDS = ['main_app.EmailBackend.EmailBackend']
-TIME_ZONE = 'Pakistan/Karachi'
+TIME_ZONE = 'Asia/Karachi'
 
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_mails")
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.titan.email'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.titan.email'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_USE_SSL = False
 
+#EMAIL_HOST_USER = os.environ.get('EMAIL_ADDRESS')
+#EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
-EMAIL_HOST_USER = os.environ.get('EMAIL_ADDRESS')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY')  # Get from Resend dashboard
+DEFAULT_FROM_EMAIL = 'no-reply@officeops.live' 
+EMAIL_BACKEND = 'resend_backend.ResendBackend'
+DEFAULT_FROM_EMAIL = 'no-reply@officeops.live'
 
-DEFAULT_FROM_EMAIL = 'OfficeOps <noreply@officeops.live>'
-
-# DEFAULT_FROM_EMAIL = "OfficeOps <admin@admin.com>"
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
