@@ -2,6 +2,7 @@ import json
 import math
 from datetime import datetime
 
+from .send_mail import send_leave_request_email
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
@@ -100,13 +101,18 @@ def employee_apply_leave(request):
                 obj = form.save(commit=False)
                 obj.employee = employee
                 obj.save()
-                messages.success(
-                    request, "Application for leave has been submitted for review")
+                # Send email to admin
+                send_leave_request_email(
+    employee_name=employee.admin.get_full_name(),
+    leave_reason=obj.message  # <-- correct field name
+)
+                messages.success(request, "Application for leave has been submitted for review")
                 return redirect(reverse('employee_apply_leave'))
-            except Exception:
-                messages.error(request, "Could not submit")
+            except Exception as e:
+                messages.error(request, f"Could not submit: {e}")
+                print("Leave request error:", e)  # Add this line for debugging
         else:
-            messages.error(request, "Form has errors!")
+            messages.error(request, f"Form has errors! {form.errors}")
     return render(request, "employee_template/employee_apply_leave.html", context)
 
 

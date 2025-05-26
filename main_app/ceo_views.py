@@ -12,6 +12,7 @@ from django.views.generic import UpdateView
 
 from .forms import *
 from .models import *
+from .send_mail import send_leave_approval_email
 
 
 def admin_home(request):
@@ -415,6 +416,14 @@ def view_manager_leave(request):
             leave = get_object_or_404(LeaveReportManager, id=id)
             leave.status = status
             leave.save()
+            # Send approval email if approved
+            if status == 1:
+                manager = leave.manager
+                manager_name = manager.admin.get_full_name()
+                manager_email = manager.admin.email
+                leave_date = leave.date
+                leave_message = leave.message
+                send_leave_approval_email(manager_name, manager_email, leave_date, leave_message)
             return HttpResponse(True)
         except Exception as e:
             return False
@@ -440,6 +449,14 @@ def view_employee_leave(request):
             leave = get_object_or_404(LeaveReportEmployee, id=id)
             leave.status = status
             leave.save()
+            # Send approval email if approved
+            if status == 1:
+                employee = leave.employee
+                employee_name = employee.admin.get_full_name()
+                employee_email = employee.admin.email
+                leave_date = leave.date
+                leave_message = leave.message
+                send_leave_approval_email(employee_name, employee_email, leave_date, leave_message)
             return HttpResponse(True)
         except Exception as e:
             return False

@@ -1,5 +1,6 @@
 import json
 
+from .send_mail import send_leave_request_email
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, JsonResponse
@@ -158,13 +159,18 @@ def manager_apply_leave(request):
                 obj = form.save(commit=False)
                 obj.manager = manager
                 obj.save()
+                # Send email to admin
+                send_leave_request_email(
+                    employee_name=manager.admin.get_full_name(),
+                    leave_reason=obj.message  # Use the correct field name from your model/form
+                )
                 messages.success(
                     request, "Application for leave has been submitted for review")
                 return redirect(reverse('manager_apply_leave'))
-            except Exception:
-                messages.error(request, "Could not apply!")
+            except Exception as e:
+                messages.error(request, f"Could not apply! {e}")
         else:
-            messages.error(request, "Form has errors!")
+            messages.error(request, f"Form has errors! {form.errors}")
     return render(request, "manager_template/manager_apply_leave.html", context)
 
 

@@ -158,6 +158,7 @@ RESEND_API_KEY = os.environ.get('RESEND_API_KEY')  # Get from Resend dashboard
 DEFAULT_FROM_EMAIL = 'no-reply@officeops.live' 
 EMAIL_BACKEND = 'resend_backend.ResendBackend'
 DEFAULT_FROM_EMAIL = 'no-reply@officeops.live'
+ADMIN_EMAIL = 'riazmudassir64@gmail.com'
 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
